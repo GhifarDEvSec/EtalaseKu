@@ -215,9 +215,16 @@
 }
 
 .product-card-media {
+  position: relative;
   aspect-ratio: 4 / 3;
   overflow: hidden;
   background-color: var(--color-bg);
+}
+
+.product-card-link {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .product-card-image {
@@ -545,4 +552,199 @@
     padding: 0 var(--space-2);
     font-size: 0.875rem;
   }
+}
+
+.navbar-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  margin-left: var(--space-1);
+  padding: 0 0.35rem;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-accent);
+  color: var(--color-accent-contrast);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.favorite-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  background-color: var(--color-surface);
+  color: var(--color-muted);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.product-card-media .favorite-button {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  background-color: rgba(255, 255, 255, 0.92);
+}
+
+.favorite-button:hover {
+  border-color: #dc2626;
+  color: #dc2626;
+}
+
+.favorite-button.is-active {
+  border-color: #fecaca;
+  background-color: #fef2f2;
+  color: #dc2626;
+}
+
+.favorite-button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.product-detail-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.product-detail-heading .favorite-button {
+  flex: none;
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.product-notes {
+  max-width: 720px;
+  margin-top: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-border);
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.note-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.note-textarea {
+  width: 100%;
+  min-height: 96px;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  resize: vertical;
+}
+
+.note-textarea:focus {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+  border-color: var(--color-accent);
+}
+
+.note-textarea[aria-invalid='true'] {
+  border-color: #c0392b;
+}
+
+.note-form-meta {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.note-counter {
+  font-size: 0.8125rem;
+  color: var(--color-muted);
+}
+
+.note-counter.is-over {
+  color: #c0392b;
+  font-weight: 600;
+}
+
+.note-error {
+  font-size: 0.875rem;
+  color: #c0392b;
+}
+
+.note-success {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #15803d;
+}
+
+.note-form .btn {
+  align-self: flex-start;
+}
+
+.note-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.note-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.note-item-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.note-item-text {
+  overflow-wrap: anywhere;
+}
+
+.note-item-date {
+  font-size: 0.8125rem;
+  color: var(--color-muted);
+}
+
+.note-delete {
+  flex: none;
+  padding: var(--space-2) var(--space-3);
+  font-size: 0.8125rem;
+}
+
+.note-empty {
+  color: var(--color-muted);
+}
+
+.favorites-empty {
+  padding-block: var(--space-4);
+  text-align: center;
+}
+
+.favorites-empty .btn {
+  margin-top: var(--space-4);
 }

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { appConfig } from '../../config'
+import { useFavorites } from '../../hooks/useFavorites'
 
 type NavItem = {
   to: string
@@ -16,6 +17,7 @@ const navItems: NavItem[] = [
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
+  const { count } = useFavorites()
 
   return (
     <header className="navbar">
@@ -44,6 +46,7 @@ export default function Navbar() {
               onClick={() => setIsOpen(false)}
             >
               {item.label}
+              {item.to === '/favorit' ? <span className="navbar-count">{count}</span> : null}
             </NavLink>
           ))}
         </nav>

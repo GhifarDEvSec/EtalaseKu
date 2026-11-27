@@ -1,50 +1,53 @@
-# Tahap 3 dari 5: Pencarian, Filter, Sorting, dan Pagination
+# Tahap 4 dari 5: Context API (Favorit dan Catatan) dan Form
 
 ## Konteks
-Tahap 1 dan 2 selesai. Kerjakan hanya search, filter kategori, sorting, dan pagination dengan state disimpan di URL. Context dan form dikerjakan di tahap lain. Setelah selesai, berhenti.
+Tahap 1 sampai 3 selesai. Kerjakan hanya global state dengan Context API, halaman Favorit, dan form catatan dengan validasi. Setelah selesai, berhenti.
 
 ## Aturan
 - Hanya git status dan git diff. Jangan menyarankan pesan commit.
 - Dilarang komentar dan tipe any. Dilarang menyebut AI, agent, atau nama tool di berkas repo. Jangan membuat PROGRESS.md atau STRUCTURE.md.
-- Satu komponen satu berkas, ekspor default, props bertipe interface. Teks Bahasa Indonesia.
-- Dilarang pustaka tambahan. Ikuti desain yang ada.
+- Satu komponen satu berkas, ekspor default untuk komponen, props bertipe interface. Teks Bahasa Indonesia.
+- Dilarang pustaka state management tambahan. Ikuti desain yang ada.
 
 ## Berkas
 Dibuat:
 ```
-src/hooks/useProductQuery.ts
-src/hooks/useDebouncedValue.ts
-src/utils/productQuery.ts
-src/components/products/SearchBar.tsx
-src/components/products/CategoryFilter.tsx
-src/components/products/SortSelect.tsx
-src/components/products/Pagination.tsx
+src/context/FavoritesContext.tsx
+src/context/NotesContext.tsx
+src/hooks/useFavorites.ts
+src/hooks/useNotes.ts
+src/hooks/useLocalStorage.ts
+src/components/products/FavoriteButton.tsx
+src/components/notes/NoteForm.tsx
+src/components/notes/NoteList.tsx
+src/types/note.ts
 ```
-Diubah: src/types/product.ts, src/pages/ProductsPage.tsx, src/services/productService.ts, src/styles.
+Diubah: src/main.tsx, src/components/layout/Navbar.tsx, src/components/products/ProductCard.tsx, src/pages/ProductDetailPage.tsx, src/pages/FavoritesPage.tsx, src/styles.
 
 ## Spesifikasi
-- types/product.ts: tambah SortOption = "default" | "harga-asc" | "harga-desc" | "nama-asc" | "rating-desc" dan interface ProductQuery (q, category, sort, page).
-- productService.ts: tambah fetchCategories(): Promise<string[]> (endpoint /products/category-list).
-- utils/productQuery.ts: fungsi murni filterProducts, sortProducts, paginateProducts (generik bila memungkinkan), semuanya tanpa mengubah array asli. Pencarian pada judul, deskripsi, dan brand tanpa membedakan huruf besar kecil. 12 produk per halaman.
-- useDebouncedValue<T>(value, delay): custom hook penunda nilai (300 ms) untuk kolom pencarian.
-- useProductQuery: memakai useSearchParams (URL state). Membaca dan menulis parameter q, kategori, urut, dan halaman. Mengembalikan query terbaca, fungsi pengubah, dan reset. Mengubah q, kategori, atau urut mengembalikan halaman ke 1. Nilai tidak valid di URL diganti nilai bawaan. Parameter bawaan tidak ditulis ke URL.
-- SearchBar: kolom terkontrol dengan label dan tombol hapus; nilai lokal ditunda lewat useDebouncedValue baru ditulis ke URL.
-- CategoryFilter: select berisi "Semua kategori" dan kategori dari API.
-- SortSelect: select dengan lima opsi urut.
-- Pagination: tombol Sebelumnya, nomor halaman (ringkas dengan elipsis bila banyak), Berikutnya; halaman aktif ditandai aria-current; tombol nonaktif di ujung; menggulir ke atas daftar saat pindah halaman.
-- ProductsPage: ambil semua produk sekali, hitung hasil filter, sort, dan paginasi dari data dan URL (tidak disimpan sebagai state terpisah). Tampilkan jumlah hasil, tombol "Reset" bila ada filter aktif, EmptyState "Produk tidak ditemukan" bila hasil kosong. Membuka URL seperti /produk?q=phone&kategori=smartphones&urut=harga-asc&halaman=1 harus langsung menampilkan kondisi yang sama; tombol back browser mengembalikan kondisi sebelumnya.
-- Tautan ke detail membawa query saat ini sehingga tombol "Kembali ke daftar" di halaman detail mengembalikan pencarian dan halaman yang sama (gunakan state pada Link atau parameter query).
-- CSS: bilah kontrol satu baris di desktop dan bertumpuk di mobile, input tinggi minimal 44px, rapi di 360px sampai 1440px.
+- useLocalStorage<T>(key, initialValue): custom hook generik, aman terhadap data rusak (try/catch), menyimpan perubahan ke localStorage.
+- types/note.ts: interface Note (id, productId, text, createdAt).
+- FavoritesContext: Provider menyimpan id produk favorit (array number). Nilai: favoriteIds, isFavorite(id), toggleFavorite(id), count. Disimpan lewat useLocalStorage. useFavorites adalah hook untuk memakai context dan melempar error jika dipakai di luar Provider.
+- NotesContext: Provider menyimpan Note[]. Nilai: notes, getNotesByProduct(productId), addNote(productId, text), deleteNote(id). Disimpan lewat useLocalStorage. useNotes sebagai hook pemakai.
+- main.tsx: bungkus App dengan kedua Provider di dalam BrowserRouter.
+- FavoriteButton: tombol ikon dengan aria-pressed dan aria-label yang menyebut nama produk; dipakai di ProductCard dan ProductDetailPage.
+- Navbar: tampilkan jumlah favorit (dari context) pada tautan Favorit.
+- FavoritesPage: memakai daftar produk dari API (useProducts) dan menampilkan hanya yang favorit lewat ProductGrid. Loading dan error ditangani. Jika belum ada favorit tampilkan EmptyState "Belum ada produk favorit" dengan tautan ke /produk.
+- NoteForm (form state): textarea terkontrol (useState) dengan label, hitung karakter, validasi: wajib diisi, minimal 5 karakter, maksimal 200 karakter. Pesan kesalahan tampil di bawah kolom dan menghilang saat input valid. onSubmit dengan preventDefault, panggil addNote, lalu kosongkan form dan tampilkan pesan sukses singkat.
+- NoteList: daftar catatan produk (map dengan key id), tanggal terformat Indonesia, tombol Hapus dengan konfirmasi; kosong menampilkan teks "Belum ada catatan".
+- ProductDetailPage: tambahkan bagian Catatan berisi NoteForm dan NoteList untuk produk tersebut.
+- CSS: form dan daftar catatan rapi di 360px sampai 1440px, fokus jelas, animasi halus (mati pada reduced-motion).
 
 ## Checkpoint
 - [ ] Semua berkas wajib ada
 - [ ] npm run build berhasil
-- [ ] Pencarian, filter, sort, dan pagination berfungsi bersamaan
-- [ ] URL berubah sesuai pilihan, reload dan tombol back mempertahankan kondisi
-- [ ] Hasil kosong menampilkan empty state
-- [ ] Kembali dari detail mengembalikan pencarian dan halaman
+- [ ] Favorit bisa ditambah dan dihapus dari kartu dan detail, jumlah di navbar ikut berubah, tetap ada setelah reload
+- [ ] Halaman Favorit menampilkan hanya produk favorit
+- [ ] Form menolak input kosong, kurang dari 5 karakter, dan lebih dari 200 karakter dengan pesan jelas
+- [ ] Catatan bertambah dan terhapus, tetap ada setelah reload, terpisah per produk
+- [ ] Pemakaian context di luar Provider memunculkan error yang jelas
 - [ ] Tanpa komentar, any, atau penyebutan AI/agent
 - [ ] .env tidak muncul di git status
 
 ## Laporan Akhir
-Pohon direktori, hasil build, git status. Jangan menyarankan pesan commit. Tutup dengan "Tahap 3 selesai." lalu berhenti.
+Pohon direktori, hasil build, git status. Jangan menyarankan pesan commit. Tutup dengan "Tahap 4 selesai." lalu berhenti.

@@ -1,74 +1,57 @@
-# Tahap 1 dari 5: Inisialisasi, Routing, dan Struktur Folder
+# Tahap 2 dari 5: Data Fetching dan Komponen Reusable
 
 ## Konteks
-Aplikasi "Katalog Produk" dengan React, React Router, Vite, dan TypeScript. Kerjakan hanya tahap 1, lalu berhenti dan tunggu perintah.
+Tahap 1 selesai. Kerjakan hanya pengambilan data dari API, custom hook, komponen reusable, dan tampilan daftar serta detail. Search, filter, sort, pagination, Context, dan form dikerjakan di tahap lain. Setelah selesai, berhenti.
 
 ## Aturan
 - Hanya git status dan git diff. Jangan menyarankan pesan commit.
-- Jangan deploy.
-- Dilarang komentar di semua berkas. Dilarang tipe any.
-- Dilarang menyebut AI, agent, asisten, atau nama tool di berkas repo. Jangan membuat PROGRESS.md atau STRUCTURE.md.
-- Teks antarmuka Bahasa Indonesia.
-- Proyek dibuat langsung di root folder kerja. Jangan hapus folder .git.
+- Dilarang komentar dan tipe any. Dilarang menyebut AI, agent, atau nama tool di berkas repo. Jangan membuat PROGRESS.md atau STRUCTURE.md.
+- Satu komponen satu berkas, ekspor default, props bertipe interface. Teks Bahasa Indonesia.
+- Pemanggilan API hanya di folder services. Komponen dan halaman tidak boleh memanggil fetch langsung.
+- Dilarang pustaka tambahan untuk data fetching (gunakan fetch bawaan). Ikuti desain yang ada.
+
+## Berkas
+Dibuat:
+```
+src/types/product.ts
+src/services/apiClient.ts
+src/services/productService.ts
+src/hooks/useFetch.ts
+src/hooks/useProducts.ts
+src/hooks/useProduct.ts
+src/components/ui/Button.tsx
+src/components/ui/Badge.tsx
+src/components/ui/Loader.tsx
+src/components/ui/ErrorMessage.tsx
+src/components/ui/EmptyState.tsx
+src/components/products/ProductCard.tsx
+src/components/products/ProductGrid.tsx
+```
+Diubah: src/pages/ProductsPage.tsx, src/pages/ProductDetailPage.tsx, src/pages/HomePage.tsx, src/styles (tambah gaya komponen).
 
 ## Spesifikasi
-Vite template react-ts non-interaktif (npm create vite@latest . -- --template react-ts), TypeScript strict, npm. Pasang react-router-dom.
-
-Berkas dan folder wajib:
-```
-index.html
-package.json
-vite.config.ts
-.gitignore
-.env
-.env.example
-public/favicon.svg
-public/_redirects
-src/main.tsx
-src/App.tsx
-src/config.ts
-src/vite-env.d.ts
-src/components/layout/AppLayout.tsx
-src/components/layout/Navbar.tsx
-src/components/layout/Footer.tsx
-src/pages/HomePage.tsx
-src/pages/ProductsPage.tsx
-src/pages/ProductDetailPage.tsx
-src/pages/FavoritesPage.tsx
-src/pages/NotFoundPage.tsx
-src/hooks/
-src/services/
-src/context/
-src/types/
-src/styles/
-```
-Folder kosong diberi berkas .gitkeep.
-
-- .env (tidak masuk Git):
-```
-VITE_APP_NAME=Katalog Produk
-VITE_STUDENT_NAME=Nama Mahasiswa
-VITE_STUDENT_NIM=0000000000
-VITE_API_BASE_URL=https://dummyjson.com
-```
-.env.example berisi sama persis dan masuk Git. vite-env.d.ts memperluas ImportMetaEnv. config.ts membaca empat variabel dan mengekspor appConfig; satu-satunya tempat membaca import.meta.env.
-- .gitignore: node_modules, dist, .env, .env.local, .env.*.local, *.log, .DS_Store, .vscode/* (kecuali .vscode/extensions.json).
-- public/_redirects berisi satu baris: `/* /index.html 200` (agar rute dinamis tidak 404 saat di-reload di Netlify).
-- main.tsx: StrictMode dan BrowserRouter membungkus App.
-- App.tsx: Routes dengan nested route. Route induk path "/" memakai AppLayout (berisi Navbar, Outlet, Footer). Anak: index (HomePage), "produk" (ProductsPage), "produk/:id" (ProductDetailPage), "favorit" (FavoritesPage), "*" (NotFoundPage).
-- Navbar: NavLink untuk Beranda, Produk, Favorit (gaya aktif), tautan dirender dengan map dan key, menampilkan appName. Di bawah 768px menu dibuka tombol menu memakai useState (local state), menutup setelah tautan diklik.
-- Footer: appName, nama, dan NIM dari appConfig.
-- Setiap halaman sementara berisi judul dan teks singkat. ProductDetailPage membaca id dengan useParams dan menampilkannya. NotFoundPage punya tautan kembali ke beranda.
-- Desain: bersih dan modern, bukan tampilan template bawaan. Satu aksen warna, kartu berborder tipis, teks kontras minimal 4.5:1, tanpa framework CSS dan tanpa sumber eksternal. CSS di src/styles (tokens.css, base.css, layout.css), container maksimum 1100px, tanpa scroll horizontal, rapi di 360px sampai 1440px.
-- Pembersihan: hapus App.css, index.css, assets/react.svg, public/vite.svg, dan isi contoh template.
+- types/product.ts: interface Product (id, title, description, category, price, discountPercentage, rating, stock, brand opsional, thumbnail, images string[]) dan interface ProductListResponse (products, total, skip, limit).
+- apiClient.ts: fungsi generik getJson<T>(path: string): Promise<T> memakai fetch dengan base URL dari appConfig. Jika respons tidak ok, lempar Error dengan pesan Bahasa Indonesia yang jelas.
+- productService.ts: fetchAllProducts(): Promise<Product[]> memanggil /products?limit=0. fetchProductById(id: string): Promise<Product> memanggil /products/{id}.
+- useFetch<T>(fetcher): custom hook generik yang mengembalikan data, loading, error, dan reload. Membatalkan hasil jika komponen sudah dilepas atau parameter berubah.
+- useProducts dan useProduct: membungkus useFetch dengan service yang sesuai.
+- Komponen reusable: Button (variant utama, netral, bahaya), Badge (tone), Loader (indikator loading beraksesibilitas, role="status"), ErrorMessage (pesan dan tombol "Coba Lagi"), EmptyState (pesan dan ilustrasi SVG sederhana buatan sendiri).
+- ProductCard: gambar, judul, kategori (Badge), harga terformat Rupiah-gaya Indonesia dengan simbol dolar atau format yang konsisten, rating, tautan Link ke /produk/{id}.
+- ProductGrid: menerima products dan merender ProductCard lewat map dengan key id; kosong menampilkan EmptyState "Produk tidak ditemukan".
+- ProductsPage: memakai useProducts; loading menampilkan Loader, error menampilkan ErrorMessage dengan reload, data menampilkan ProductGrid.
+- ProductDetailPage: memakai useParams dan useProduct; menampilkan loading, error (termasuk id tidak ada), gambar utama dan galeri kecil, judul, deskripsi, kategori, harga, diskon, rating, stok, dan tautan kembali ke daftar.
+- HomePage: ringkasan aplikasi dan tombol menuju /produk.
+- CSS: grid kartu 1 kolom di mobile, 2 kolom mulai 640px, 3 kolom mulai 1024px, animasi halus (mati pada prefers-reduced-motion), rapi di 360px sampai 1440px.
 
 ## Checkpoint
-- [ ] Semua berkas dan folder wajib ada (periksa dengan ls)
-- [ ] npm install dan npm run build berhasil
-- [ ] Pindah halaman lewat menu tanpa reload, /produk/5 menampilkan id 5, alamat tak dikenal menampilkan NotFoundPage
-- [ ] Menu mobile berfungsi, tanpa scroll horizontal
-- [ ] .env tidak muncul di git status, .env.example muncul
+- [ ] Semua berkas wajib ada
+- [ ] npm run build berhasil
+- [ ] Daftar produk tampil dari API, Loader muncul saat memuat
+- [ ] Error tampil saat internet dimatikan atau URL API salah sementara, tombol Coba Lagi berfungsi
+- [ ] /produk/1 menampilkan detail, /produk/99999 menampilkan pesan error
+- [ ] Tidak ada fetch di luar folder services
 - [ ] Tanpa komentar, any, atau penyebutan AI/agent
+- [ ] .env tidak muncul di git status
 
 ## Laporan Akhir
-Pohon direktori, hasil build, git status. Jangan menyarankan pesan commit. Tutup dengan "Tahap 1 selesai." lalu berhenti.
+Pohon direktori, hasil build, git status. Jangan menyarankan pesan commit. Tutup dengan "Tahap 2 selesai." lalu berhenti.

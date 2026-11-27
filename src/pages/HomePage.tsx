@@ -1,12 +1,18 @@
+import { Link } from 'react-router-dom'
 import { appConfig } from '../config'
 
 export default function HomePage() {
   return (
-    <section className="page">
-      <h1 className="page-title">Beranda</h1>
-      <p className="page-text">
-        Selamat datang di {appConfig.appName}. Temukan produk pilihan dengan mudah dan cepat.
+    <section className="home-hero">
+      <p className="home-eyebrow">Selamat datang</p>
+      <h1 className="home-title">{appConfig.appName}</h1>
+      <p className="home-text">
+        Ringkasan aplikasi katalog produk: temukan produk pilihan, lihat detail lengkap, dan simpan
+        favorit Anda di satu tempat.
       </p>
+      <Link className="btn btn-primary" to="/produk">
+        Lihat Produk
+      </Link>
     </section>
   )
 }

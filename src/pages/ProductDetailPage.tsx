@@ -5,6 +5,7 @@ import FavoriteButton from '../components/products/FavoriteButton'
 import Badge from '../components/ui/Badge'
 import ErrorMessage from '../components/ui/ErrorMessage'
 import Loader from '../components/ui/Loader'
+import { usePageTitle } from '../hooks/usePageTitle'
 import { useProduct } from '../hooks/useProduct'
 
 const priceFormatter = new Intl.NumberFormat('id-ID', {
@@ -16,6 +17,8 @@ export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>()
   const { search } = useLocation()
   const { data: product, loading, error, reload } = useProduct(id)
+
+  usePageTitle(product ? product.title : 'Detail Produk')
 
   return (
     <section className="page page-wide">

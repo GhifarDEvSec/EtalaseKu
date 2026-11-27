@@ -72,8 +72,8 @@
   flex-direction: column;
   justify-content: center;
   gap: 4px;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2.75rem;
+  height: 2.75rem;
   padding: 0;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);

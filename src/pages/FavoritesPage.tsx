@@ -5,8 +5,11 @@ import ErrorMessage from '../components/ui/ErrorMessage'
 import Loader from '../components/ui/Loader'
 import { useFavorites } from '../hooks/useFavorites'
 import { useProducts } from '../hooks/useProducts'
+import { usePageTitle } from '../hooks/usePageTitle'
 
 export default function FavoritesPage() {
+  usePageTitle('Favorit')
+
   const { favoriteIds } = useFavorites()
   const { data, loading, error, reload } = useProducts()
 

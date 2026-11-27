@@ -11,10 +11,13 @@ import Loader from '../components/ui/Loader'
 import { useFetch } from '../hooks/useFetch'
 import { useProductQuery } from '../hooks/useProductQuery'
 import { useProducts } from '../hooks/useProducts'
+import { usePageTitle } from '../hooks/usePageTitle'
 import { fetchCategories } from '../services/productService'
 import { PAGE_SIZE, filterProducts, paginateProducts, sortProducts } from '../utils/productQuery'
 
 export default function ProductsPage() {
+  usePageTitle('Produk')
+
   const { query, setSearch, setCategory, setSort, setPage, reset } = useProductQuery()
   const { data, loading, error, reload } = useProducts()
 

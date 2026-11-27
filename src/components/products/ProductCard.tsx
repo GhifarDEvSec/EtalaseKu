@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import type { Product } from '../../types/product'
 import Badge from '../ui/Badge'
 
@@ -12,8 +12,10 @@ const priceFormatter = new Intl.NumberFormat('id-ID', {
 })
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const { search } = useLocation()
+
   return (
-    <Link className="product-card" to={`/produk/${product.id}`}>
+    <Link className="product-card" to={`/produk/${product.id}${search}`}>
       <div className="product-card-media">
         <img
           className="product-card-image"

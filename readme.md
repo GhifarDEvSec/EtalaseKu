@@ -1,57 +1,50 @@
-# Tahap 2 dari 5: Data Fetching dan Komponen Reusable
+# Tahap 3 dari 5: Pencarian, Filter, Sorting, dan Pagination
 
 ## Konteks
-Tahap 1 selesai. Kerjakan hanya pengambilan data dari API, custom hook, komponen reusable, dan tampilan daftar serta detail. Search, filter, sort, pagination, Context, dan form dikerjakan di tahap lain. Setelah selesai, berhenti.
+Tahap 1 dan 2 selesai. Kerjakan hanya search, filter kategori, sorting, dan pagination dengan state disimpan di URL. Context dan form dikerjakan di tahap lain. Setelah selesai, berhenti.
 
 ## Aturan
 - Hanya git status dan git diff. Jangan menyarankan pesan commit.
 - Dilarang komentar dan tipe any. Dilarang menyebut AI, agent, atau nama tool di berkas repo. Jangan membuat PROGRESS.md atau STRUCTURE.md.
 - Satu komponen satu berkas, ekspor default, props bertipe interface. Teks Bahasa Indonesia.
-- Pemanggilan API hanya di folder services. Komponen dan halaman tidak boleh memanggil fetch langsung.
-- Dilarang pustaka tambahan untuk data fetching (gunakan fetch bawaan). Ikuti desain yang ada.
+- Dilarang pustaka tambahan. Ikuti desain yang ada.
 
 ## Berkas
 Dibuat:
 ```
-src/types/product.ts
-src/services/apiClient.ts
-src/services/productService.ts
-src/hooks/useFetch.ts
-src/hooks/useProducts.ts
-src/hooks/useProduct.ts
-src/components/ui/Button.tsx
-src/components/ui/Badge.tsx
-src/components/ui/Loader.tsx
-src/components/ui/ErrorMessage.tsx
-src/components/ui/EmptyState.tsx
-src/components/products/ProductCard.tsx
-src/components/products/ProductGrid.tsx
+src/hooks/useProductQuery.ts
+src/hooks/useDebouncedValue.ts
+src/utils/productQuery.ts
+src/components/products/SearchBar.tsx
+src/components/products/CategoryFilter.tsx
+src/components/products/SortSelect.tsx
+src/components/products/Pagination.tsx
 ```
-Diubah: src/pages/ProductsPage.tsx, src/pages/ProductDetailPage.tsx, src/pages/HomePage.tsx, src/styles (tambah gaya komponen).
+Diubah: src/types/product.ts, src/pages/ProductsPage.tsx, src/services/productService.ts, src/styles.
 
 ## Spesifikasi
-- types/product.ts: interface Product (id, title, description, category, price, discountPercentage, rating, stock, brand opsional, thumbnail, images string[]) dan interface ProductListResponse (products, total, skip, limit).
-- apiClient.ts: fungsi generik getJson<T>(path: string): Promise<T> memakai fetch dengan base URL dari appConfig. Jika respons tidak ok, lempar Error dengan pesan Bahasa Indonesia yang jelas.
-- productService.ts: fetchAllProducts(): Promise<Product[]> memanggil /products?limit=0. fetchProductById(id: string): Promise<Product> memanggil /products/{id}.
-- useFetch<T>(fetcher): custom hook generik yang mengembalikan data, loading, error, dan reload. Membatalkan hasil jika komponen sudah dilepas atau parameter berubah.
-- useProducts dan useProduct: membungkus useFetch dengan service yang sesuai.
-- Komponen reusable: Button (variant utama, netral, bahaya), Badge (tone), Loader (indikator loading beraksesibilitas, role="status"), ErrorMessage (pesan dan tombol "Coba Lagi"), EmptyState (pesan dan ilustrasi SVG sederhana buatan sendiri).
-- ProductCard: gambar, judul, kategori (Badge), harga terformat Rupiah-gaya Indonesia dengan simbol dolar atau format yang konsisten, rating, tautan Link ke /produk/{id}.
-- ProductGrid: menerima products dan merender ProductCard lewat map dengan key id; kosong menampilkan EmptyState "Produk tidak ditemukan".
-- ProductsPage: memakai useProducts; loading menampilkan Loader, error menampilkan ErrorMessage dengan reload, data menampilkan ProductGrid.
-- ProductDetailPage: memakai useParams dan useProduct; menampilkan loading, error (termasuk id tidak ada), gambar utama dan galeri kecil, judul, deskripsi, kategori, harga, diskon, rating, stok, dan tautan kembali ke daftar.
-- HomePage: ringkasan aplikasi dan tombol menuju /produk.
-- CSS: grid kartu 1 kolom di mobile, 2 kolom mulai 640px, 3 kolom mulai 1024px, animasi halus (mati pada prefers-reduced-motion), rapi di 360px sampai 1440px.
+- types/product.ts: tambah SortOption = "default" | "harga-asc" | "harga-desc" | "nama-asc" | "rating-desc" dan interface ProductQuery (q, category, sort, page).
+- productService.ts: tambah fetchCategories(): Promise<string[]> (endpoint /products/category-list).
+- utils/productQuery.ts: fungsi murni filterProducts, sortProducts, paginateProducts (generik bila memungkinkan), semuanya tanpa mengubah array asli. Pencarian pada judul, deskripsi, dan brand tanpa membedakan huruf besar kecil. 12 produk per halaman.
+- useDebouncedValue<T>(value, delay): custom hook penunda nilai (300 ms) untuk kolom pencarian.
+- useProductQuery: memakai useSearchParams (URL state). Membaca dan menulis parameter q, kategori, urut, dan halaman. Mengembalikan query terbaca, fungsi pengubah, dan reset. Mengubah q, kategori, atau urut mengembalikan halaman ke 1. Nilai tidak valid di URL diganti nilai bawaan. Parameter bawaan tidak ditulis ke URL.
+- SearchBar: kolom terkontrol dengan label dan tombol hapus; nilai lokal ditunda lewat useDebouncedValue baru ditulis ke URL.
+- CategoryFilter: select berisi "Semua kategori" dan kategori dari API.
+- SortSelect: select dengan lima opsi urut.
+- Pagination: tombol Sebelumnya, nomor halaman (ringkas dengan elipsis bila banyak), Berikutnya; halaman aktif ditandai aria-current; tombol nonaktif di ujung; menggulir ke atas daftar saat pindah halaman.
+- ProductsPage: ambil semua produk sekali, hitung hasil filter, sort, dan paginasi dari data dan URL (tidak disimpan sebagai state terpisah). Tampilkan jumlah hasil, tombol "Reset" bila ada filter aktif, EmptyState "Produk tidak ditemukan" bila hasil kosong. Membuka URL seperti /produk?q=phone&kategori=smartphones&urut=harga-asc&halaman=1 harus langsung menampilkan kondisi yang sama; tombol back browser mengembalikan kondisi sebelumnya.
+- Tautan ke detail membawa query saat ini sehingga tombol "Kembali ke daftar" di halaman detail mengembalikan pencarian dan halaman yang sama (gunakan state pada Link atau parameter query).
+- CSS: bilah kontrol satu baris di desktop dan bertumpuk di mobile, input tinggi minimal 44px, rapi di 360px sampai 1440px.
 
 ## Checkpoint
 - [ ] Semua berkas wajib ada
 - [ ] npm run build berhasil
-- [ ] Daftar produk tampil dari API, Loader muncul saat memuat
-- [ ] Error tampil saat internet dimatikan atau URL API salah sementara, tombol Coba Lagi berfungsi
-- [ ] /produk/1 menampilkan detail, /produk/99999 menampilkan pesan error
-- [ ] Tidak ada fetch di luar folder services
+- [ ] Pencarian, filter, sort, dan pagination berfungsi bersamaan
+- [ ] URL berubah sesuai pilihan, reload dan tombol back mempertahankan kondisi
+- [ ] Hasil kosong menampilkan empty state
+- [ ] Kembali dari detail mengembalikan pencarian dan halaman
 - [ ] Tanpa komentar, any, atau penyebutan AI/agent
 - [ ] .env tidak muncul di git status
 
 ## Laporan Akhir
-Pohon direktori, hasil build, git status. Jangan menyarankan pesan commit. Tutup dengan "Tahap 2 selesai." lalu berhenti.
+Pohon direktori, hasil build, git status. Jangan menyarankan pesan commit. Tutup dengan "Tahap 3 selesai." lalu berhenti.

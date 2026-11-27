@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router-dom'
+import { Link, useLocation, useParams } from 'react-router-dom'
 import Badge from '../components/ui/Badge'
 import ErrorMessage from '../components/ui/ErrorMessage'
 import Loader from '../components/ui/Loader'
@@ -11,11 +11,12 @@ const priceFormatter = new Intl.NumberFormat('id-ID', {
 
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>()
+  const { search } = useLocation()
   const { data: product, loading, error, reload } = useProduct(id)
 
   return (
     <section className="page page-wide">
-      <Link className="back-link" to="/produk">
+      <Link className="back-link" to={`/produk${search}`}>
         ← Kembali ke daftar produk
       </Link>
       {loading ? <Loader /> : null}

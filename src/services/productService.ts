@@ -9,3 +9,7 @@ export async function fetchAllProducts(): Promise<Product[]> {
 export async function fetchProductById(id: string): Promise<Product> {
   return getJson<Product>(`/products/${id}`)
 }
+
+export async function fetchCategories(): Promise<string[]> {
+  return getJson<string[]>('/products/category-list')
+}

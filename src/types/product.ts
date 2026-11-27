@@ -18,3 +18,12 @@ export interface ProductListResponse {
   skip: number
   limit: number
 }
+
+export type SortOption = 'default' | 'harga-asc' | 'harga-desc' | 'nama-asc' | 'rating-desc'
+
+export interface ProductQuery {
+  q: string
+  category: string
+  sort: SortOption
+  page: number
+}

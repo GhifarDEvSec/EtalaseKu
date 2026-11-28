@@ -1,4 +1,6 @@
 import { useNotes } from '../../hooks/useNotes'
+import { useToast } from '../../hooks/useToast'
+import Button from '../ui/Button'
 
 interface NoteListProps {
   productId: number
@@ -11,11 +13,13 @@ const dateFormatter = new Intl.DateTimeFormat('id-ID', {
 
 export default function NoteList({ productId }: NoteListProps) {
   const { getNotesByProduct, deleteNote } = useNotes()
+  const { showToast } = useToast()
   const notes = getNotesByProduct(productId)
 
   const handleDelete = (id: string) => {
     if (window.confirm('Hapus catatan ini?')) {
       deleteNote(id)
+      showToast('Catatan berhasil dihapus.', 'info')
     }
   }
 
@@ -33,13 +37,9 @@ export default function NoteList({ productId }: NoteListProps) {
               {dateFormatter.format(new Date(note.createdAt))}
             </time>
           </div>
-          <button
-            type="button"
-            className="btn btn-danger note-delete"
-            onClick={() => handleDelete(note.id)}
-          >
+          <Button type="button" variant="danger" className="note-delete" onClick={() => handleDelete(note.id)}>
             Hapus
-          </button>
+          </Button>
         </li>
       ))}
     </ul>

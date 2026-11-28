@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { useNotes } from '../../hooks/useNotes'
+import { useToast } from '../../hooks/useToast'
+import Button from '../ui/Button'
 
 interface NoteFormProps {
   productId: number
@@ -29,13 +31,12 @@ function validate(text: string): string {
 
 export default function NoteForm({ productId }: NoteFormProps) {
   const { addNote } = useNotes()
+  const { showToast } = useToast()
   const [text, setText] = useState('')
   const [error, setError] = useState('')
-  const [success, setSuccess] = useState(false)
 
   const handleChange = (value: string) => {
     setText(value)
-    setSuccess(false)
     setError(validate(value))
   }
 
@@ -52,7 +53,7 @@ export default function NoteForm({ productId }: NoteFormProps) {
     addNote(productId, text)
     setText('')
     setError('')
-    setSuccess(true)
+    showToast('Catatan berhasil disimpan.', 'sukses')
   }
 
   return (
@@ -80,14 +81,7 @@ export default function NoteForm({ productId }: NoteFormProps) {
           {error}
         </p>
       ) : null}
-      {success ? (
-        <p className="note-success" role="status">
-          Catatan berhasil ditambahkan.
-        </p>
-      ) : null}
-      <button type="submit" className="btn btn-primary">
-        Tambah Catatan
-      </button>
+      <Button type="submit">Simpan Catatan</Button>
     </form>
   )
 }

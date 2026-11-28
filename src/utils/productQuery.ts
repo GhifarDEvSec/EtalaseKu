@@ -1,6 +1,12 @@
+import { usdToIdr } from './currency'
 import type { Product, SortOption } from '../types/product'
 
 export const PAGE_SIZE = 12
+
+export function formatCategoryLabel(category: string): string {
+  const label = category.replace(/-/g, ' ')
+  return label.charAt(0).toUpperCase() + label.slice(1)
+}
 
 export function filterProducts(products: Product[], search: string, category: string): Product[] {
   const term = search.trim().toLowerCase()
@@ -24,9 +30,9 @@ export function sortProducts(products: Product[], sort: SortOption): Product[] {
 
   switch (sort) {
     case 'harga-asc':
-      return copy.sort((first, second) => first.price - second.price)
+      return copy.sort((first, second) => usdToIdr(first.price) - usdToIdr(second.price))
     case 'harga-desc':
-      return copy.sort((first, second) => second.price - first.price)
+      return copy.sort((first, second) => usdToIdr(second.price) - usdToIdr(first.price))
     case 'nama-asc':
       return copy.sort((first, second) => first.title.localeCompare(second.title, 'id'))
     case 'rating-desc':

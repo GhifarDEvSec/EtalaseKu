@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom'
+import ProductCardSkeleton from '../components/products/ProductCardSkeleton'
 import ProductGrid from '../components/products/ProductGrid'
 import EmptyState from '../components/ui/EmptyState'
 import ErrorMessage from '../components/ui/ErrorMessage'
-import Loader from '../components/ui/Loader'
 import { useFavorites } from '../hooks/useFavorites'
-import { useProducts } from '../hooks/useProducts'
 import { usePageTitle } from '../hooks/usePageTitle'
+import { useProducts } from '../hooks/useProducts'
 
 export default function FavoritesPage() {
   usePageTitle('Favorit')
@@ -19,9 +19,17 @@ export default function FavoritesPage() {
     <section className="page page-wide">
       <header className="page-header">
         <h1 className="page-title">Favorit</h1>
-        <p className="page-text">Produk yang Anda tandai sebagai favorit.</p>
+        <p className="page-text">
+          {loading ? 'Memuat produk favorit...' : `${favoriteProducts.length} produk favorit`}
+        </p>
       </header>
-      {loading ? <Loader /> : null}
+      {loading ? (
+        <div className="product-grid">
+          {Array.from({ length: 4 }, (_, index) => (
+            <ProductCardSkeleton key={index} />
+          ))}
+        </div>
+      ) : null}
       {!loading && error ? <ErrorMessage message={error} onRetry={reload} /> : null}
       {!loading && !error ? (
         favoriteProducts.length === 0 ? (
